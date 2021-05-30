@@ -1,13 +1,12 @@
-# 提供了对多维数组对象的支持，支持高级大量的维度数组与矩阵运算，也针对数组运算提供大量的数学函数库。
+# os模块提供了多数操作系统的功能接口函数
+import os
+
+# 处理日期和时间
+# 绘图
+import matplotlib.pyplot as plt
 import numpy as np
 # Pandas是一个强大的分析结构化数据的工具集；用于数据挖掘和数据分析，同时也提供数据清洗功能。
 import pandas as pd
-# os模块提供了多数操作系统的功能接口函数
-import os
-# 处理日期和时间
-import arrow as ar
-# 绘图
-import matplotlib.pyplot as plt
 # Seaborn是在matplotlib的基础上进行了更高级的API封装,从而使得作图更加容易,
 import seaborn as sns
 # 一个优化matplotlib函数操作的package, Matplotlib 中文支持组件
@@ -15,17 +14,9 @@ from pyplotz.pyplotz import PyplotZ
 
 pltz = PyplotZ()
 # 三种配色的调色板
-from palettable.colorbrewer.sequential import Blues_9, BuGn_9, Greys_3, PuRd_5
+from palettable.colorbrewer.sequential import Blues_9, PuRd_5
 # re模块是python独有的匹配字符串的模块,该模块中提供的很多功能是基于正则表达式实现的
 import re
-# 格式化日期和时间
-import time
-# 进度条库
-from tqdm import tqdm
-# 序列化库
-import pickle
-# 预处理库
-from sklearn import preprocessing
 
 # matplotlib支持中文
 # plt.rcParams['font.sans-serif'] = ['Songti SC']  # 用来正常显示中文标签，字体根据自己电脑情况更改，如Windows可用SimHei
@@ -36,20 +27,9 @@ import warnings
 warnings.filterwarnings('ignore')
 # matplotlib中设置样式表
 plt.style.use('fivethirtyeight')
-# 直接在python console里面生成图像
-# %matplotlib inline
 # 目录
 os.chdir('.')
 
-# round1
-# train_path_people_1='./round1_train_cut_by_people.txt'
-# train_path_type_1='./round1_train_cut_by_type.txt'
-# test_path_a_1='./round1_ijcai_18_test_a_20180301.txt'
-# test_path_b_1='./round1_ijcai_18_test_b_20180418.txt'
-# # round2
-# train_path_type_2='./round2_train_cut_by_type.txt'
-# test_path_a_2='./round2_test_a.txt'
-# test_path_b_2='./round2_test_b.txt'
 # dataset_cut
 train_path = '090.txt'
 test_path = 'test_no_label.txt'
@@ -65,11 +45,8 @@ print('训练集与测试集共有 {} 个重复的Instance_id'.format(len(np.int
 print('训练集没有缺失值') if True not in train.isnull().any().values else print('训练集存在缺失值')
 # 测试集是否有缺失值
 print('测试集没有缺失值') if True not in test.isnull().any().values else print('测试集存在缺失值')
-
 print('训练集一共有' + str(len(train)) + '个样本')
-
 print('没有交易与交易的比例为' + str(len(train[train.is_trade == 0]) / len(train[train.is_trade == 1])))
-
 print('数据中有' + str(len(train['item_id'].unique())) + '不用的广告商品,以及' + str(len(train['shop_id'].unique())) + '个不同的商铺')
 
 # 探查下出现频率最高的各类型id
@@ -327,11 +304,6 @@ plt.legend(loc=0)
 plt.ylabel('number of property')
 plt.show()
 
-# train_item_property_list_2=pd.DataFrame([int(i.split(';')[1]) for i in train.item_property_list])
-# train_item_property_list_3=pd.DataFrame([int(i.split(';')[2]) for i in train.item_property_list if len(i.split(';'))==3])
-# test_item_property_list_1=pd.DataFrame([int(i.split(';')[0]) for i in test.item_property_list])
-# test_item_property_list_2=pd.DataFrame([int(i.split(';')[1]) for i in test.item_property_list])
-# test_item_property_list_3=pd.DataFrame([int(i.split(';')[2]) for i in test.item_property_list if len(i.split(';'))==3])
 plt.figure(figsize=(10, 6))
 plt.plot(train.groupby('item_brand_id').mean()['is_trade'], 'o-', label='is_trade rate')
 plt.xlabel('item_brand_id')
@@ -346,7 +318,6 @@ plt.ylabel('average is_trade')
 plt.legend(loc=0)
 print('There are {} item_city_id'.format(len(train.item_city_id.unique())))
 # list(train.item_city_id.values).count(train.groupby('item_city_id').mean()['is_trade'].index[53])
-
 
 plt.figure(figsize=(10, 6))
 plt.plot(train.groupby('item_price_level').mean()['is_trade'], 'o-', label='is_trade rate')

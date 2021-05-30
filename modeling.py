@@ -27,7 +27,7 @@ dtrain = xgb.DMatrix(data=data.values, label=target.values)
 progress = dict()
 # xgbparamSetting()
 param = {
-    'learning_rate': 0.05,
+    'learning_rate': 0.01,
     'eta': 0.4,
     'max_depth': 3,
     'gamma': 0,
@@ -70,29 +70,14 @@ print(data['instance_id'].nunique())
 
 data = data.iloc[trainLen:, :]  # 训练集后应该是测试集
 
-# # round1
-# train_path_people_1='../../datasets/cut/round1/round1_train_cut_by_people.txt'
-# train_path_type_1='../../datasets/cut/round1/round1_train_cut_by_type.txt'
-# test_path_a_1='../../datasets/cut/round1/round1_ijcai_18_test_a_20180301.txt'
-# test_path_b_1='../../datasets/cut/round1/round1_ijcai_18_test_b_20180418.txt'
-# # round2
-# train_path_type_2='../../datasets/cut/round2/round2_train_cut_by_type.txt'
-# test_path_a_2='../../datasets/cut/round2/round2_test_a.txt'
-# test_path_b_2='../../datasets/cut/round2/round2_test_b.txt'
-# train=pd.read_table(train_path_type_1,delimiter=' ')
-# test=pd.read_table(test_path_a_1,delimiter=' ')
-# print(trainLen)
-# print(train.shape)
-# print(test.shape)
-
-writefileName = './result.csv'
+writefileName = './result.txt'
 
 XGBmodel = xgb.Booster(model_file='./xgbModelFinal')
 XGBpreds = XGBmodel.predict(xgb.DMatrix(data.values))
 LGBMmodel = lgb.Booster(model_file='./lgbModelFinal')
 LGBMpreds = LGBMmodel.predict(data.values)
 
-preds = 0.5 * XGBpreds + 0.5 * LGBMpreds
+preds = 0.49 * XGBpreds + 0.51 * LGBMpreds
 
 sub = pd.DataFrame()
 print(testInstanceID)
@@ -100,7 +85,7 @@ print(len(preds))
 sub['instance_id'] = testInstanceID
 sub['predicted_score'] = preds  # 已经解决实际预测数和测试集数量不一致问题：这是由于特征集加入时候导致的
 
-sub.to_csv(writefileName, sep=" ", index=False, line_terminator='\r')
+sub.to_csv(writefileName, sep='\t', index=False, line_terminator='\r')
 
 import pandas as pd
 
@@ -116,31 +101,6 @@ import time
 import warnings
 
 warnings.filterwarnings("ignore")
-
-# 这是验证代码
-# train_path='../../datasets/cut/round2/round2_train_cut_by_type.txt'
-# # train_path_t='../../datasets/cut/round1/round1_train_cut_by_type.txt'
-# # test_path_a='../../datasets/cut/round1/round1_ijcai_18_test_a_20180301.txt'
-# # test_path_b='../../datasets/cut/round1/round1_ijcai_18_test_b_20180418.txt'
-# datapath = '../../produce/mergeData.csv'
-
-# data = pd.read_csv(train_path ,sep=' ')
-
-# # 将timestamp转换成datetime【%Y-%m-%d %H:%M:%S】
-# def timestamp_datetime(value):
-#     format = '%Y-%m-%d %H:%M:%S'
-#     value = time.localtime(value)
-#     dt = time.strftime(format, value)
-#     return dt # str
-
-# # 时间，datetime64[ns]
-# data['time'] = pd.to_datetime(data.context_timestamp.apply(timestamp_datetime))
-# data['month'] = data.time.dt.month
-# data['day'] = data.time.dt.day
-# # data['hour'] = data.time.dt.hour
-
-# data.groupby(['month', 'day']).count().to_csv('../../produce/count.csv')
-
 
 datapath = './featureData.csv'
 data = pd.read_csv(datapath, sep=' ')
@@ -161,15 +121,11 @@ with open(filename, 'rb') as f:
 data = data.iloc[0: trainLen, :]
 target = trainlabel
 
-# model.modelFiveFoldEval(data, target) # 865 行，ValueError: Input contains NaN, infinity or a value too large for dtype('float32').
-
 data['target'] = np.array(target)
 
 loglossList = []
 avglogloss = 0
 foldNum = 1
-
-# print(data['day'].sort_values())
 
 day24 = data[data['day'] == 24]
 
@@ -182,10 +138,6 @@ labelTrain = day19_23['target']
 dataTest = day24.drop(['target'], axis=1)
 labelTest = day24['target']
 
-# print(dataTrain)
-# print(labelTrain)
-# print(dataTest)
-# print(labelTest)
 print('here')
 
 dtrain = xgb.DMatrix(data=dataTrain.values, label=labelTrain.values)
